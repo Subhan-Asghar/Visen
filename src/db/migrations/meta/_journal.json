@@ -15,6 +15,13 @@
       "when": 1764314376220,
       "tag": "0001_lumpy_centennial",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1764316665096,
+      "tag": "0002_thankful_colleen_wing",
+      "breakpoints": true
     }
   ]
 }
