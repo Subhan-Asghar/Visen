@@ -1,6 +1,8 @@
-import { useId } from "react";
+"use client"
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner"
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
@@ -12,9 +14,47 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import axios from "axios"
+import { useMutation } from '@tanstack/react-query'
+import { useRouter } from "next/navigation";
 
 export default function SignIn() {
-  const id = useId();
+const [email, setEmail] = useState<string>()
+    const [pass, setPass] = useState<string>()
+    const [dis, setDis] = useState<boolean>(false)
+    const router = useRouter()
+    const { mutateAsync } = useMutation({
+        mutationFn: async () => {
+            const data = {
+                email: email,
+                password: pass
+            }
+            const res = await axios.post("/api/auth/login", data)
+            return res.data
+        }
+    })
+
+    const submit = async (e: React.FormEvent<HTMLFormElement>) => {
+        try {
+            e.preventDefault();
+            setDis(true)
+            await mutateAsync()
+            toast.success("User Login");
+            setTimeout(() => router.push("/dashboard"), 500);
+          
+
+        }
+        catch (err) {
+        const errorMessage = axios.isAxiosError(err) 
+      ? err.response?.data?.message || "Something went wrong"
+      : "Network error occurred";
+        toast.error(errorMessage);
+        }
+        finally {
+            setDis(false)
+        }
+    }
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -45,33 +85,35 @@ export default function SignIn() {
           </DialogHeader>
         </div>
 
-        <form className="space-y-5">
+        <form className="space-y-5" onSubmit={submit}>
           <div className="space-y-4">
             <div className="*:not-first:mt-2">
-              <Label htmlFor={`${id}-email`}>Email</Label>
+              <Label htmlFor={`email`}>Email</Label>
               <Input
-                id={`${id}-email`}
+                id={`email`}
                 placeholder="hi@yourcompany.com"
                 required
                 type="email"
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="*:not-first:mt-2">
-              <Label htmlFor={`${id}-password`}>Password</Label>
+              <Label htmlFor={`password`}>Password</Label>
               <Input
-                id={`${id}-password`}
+                id={`password`}
                 placeholder="Enter your password"
                 required
                 type="password"
+                onChange={(e) => setPass(e.target.value)}
               />
             </div>
           </div>
           <div className="flex justify-between gap-2">
             <div className="flex items-center gap-2">
-              <Checkbox id={`${id}-remember`} />
+              <Checkbox id={`remember`} />
               <Label
                 className="font-normal text-muted-foreground"
-                htmlFor={`${id}-remember`}
+                htmlFor={`remember`}
               >
                 Remember me
               </Label>
@@ -80,17 +122,10 @@ export default function SignIn() {
               Forgot password?
             </a>
           </div>
-          <Button className="w-full " type="button">
+          <Button className="w-full " type="submit" disabled={dis} >
             Sign in
           </Button>
         </form>
-        <p className="text-center text-muted-foreground text-xs">
-          New to Vizen{" "}
-          <a className="underline hover:no-underline" href="#">
-            SignUp
-          </a>
-          .
-        </p>
       </DialogContent>
     </Dialog>
   );

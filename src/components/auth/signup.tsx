@@ -45,7 +45,6 @@ export default function SignUp() {
             await mutateAsync()
             toast.success("Account created successfully!");
             setTimeout(() => router.push("/dashboard"), 500);
-            router.push("/dashboard")
 
         }
         catch (err) {

@@ -14,13 +14,13 @@ export async function POST(req:NextRequest){
         if(!(get_user.length>0)){
             return NextResponse.json({
                 message:"Invalid email or password"
-            })
+            },{status:400})
         }
         const check =await bcrypt.compare(password,get_user[0].password)
         if (!check){
             return NextResponse.json({
                 message:"Invalid email or password"
-            })
+            },{status:400})
         }
         const token=jwt.sign({ id: get_user[0].id },process.env.JWT_SECRET!,{
                  expiresIn: "7d"
