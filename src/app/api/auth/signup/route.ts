@@ -37,7 +37,7 @@ export async function POST(req:NextRequest){
 
     const res=NextResponse.json({message:"User Created "},{status:201})
 
-    res.cookies.set("user_id",token,{
+    res.cookies.set("user_session",token,{
         httpOnly:true,
         path:'/',
         maxAge: 60 * 60 * 24 * 7

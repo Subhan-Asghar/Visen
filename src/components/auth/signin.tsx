@@ -40,7 +40,7 @@ const [email, setEmail] = useState<string>()
             setDis(true)
             await mutateAsync()
             toast.success("User Login");
-            setTimeout(() => router.push("/dashboard"), 500);
+            setTimeout(() => router.push("/library"), 500);
           
 
         }

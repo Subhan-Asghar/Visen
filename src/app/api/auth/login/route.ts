@@ -28,7 +28,7 @@ export async function POST(req:NextRequest){
         
             const res=NextResponse.json({message:"User Login"},{status:200})
         
-            res.cookies.set("user_id",token,{
+            res.cookies.set("user_session",token,{
                 httpOnly:true,
                 path:'/',
                 maxAge: 60 * 60 * 24 * 7
@@ -44,7 +44,7 @@ export async function DELETE(){
     try{
         const res=NextResponse.json({message:"User LogOut"},{status:200})
 
-        res.cookies.set("user_id","",{
+        res.cookies.set("user_session","",{
                 httpOnly:true,
                 path:'/',
                 maxAge: 0
