@@ -4,7 +4,9 @@ import { jwtVerify } from "jose";
 export async function proxy(req:NextRequest){
     const token = req.cookies.get("user_session")?.value;
     const path=req.nextUrl.pathname
-   
+    if(path==="/"&&!token){
+      return NextResponse.next()
+    }
     if (!token){
       return NextResponse.redirect(new URL("/",req.url))
     }

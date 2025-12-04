@@ -6,8 +6,13 @@ import { UploadIcon, XIcon, AlertCircleIcon, VideoIcon } from 'lucide-react'
 import { useFileUpload } from '@/hooks/use-file-upload'
 import { generateVideoThumbnail } from '@/lib/video-thumbnail'
 import axios from 'axios'
+import { toast } from "sonner"
+import { useMutation } from '@tanstack/react-query'
+
 export default function UploadVideoDialog() {
-  const maxSizeMB = 100;
+  const [dis, setDis] = useState<boolean>(false)
+  const [open, setOpen] = useState<boolean>(false)
+  const maxSizeMB =50;
   const maxSize = maxSizeMB * 1024 * 1024;
 
   const [
@@ -34,31 +39,46 @@ export default function UploadVideoDialog() {
     removeFile(files[0]?.id);
   };
 
+  const { mutateAsync } = useMutation({
+    mutationFn: async () => {
+      const current = files[0]?.file;
+      if (!current) return;
+      if (!(current instanceof File)) {
+        throw new Error("Expected a File object");
+      }
+
+      try {
+        const posterBlob = await generateVideoThumbnail(current);
+        console.log(posterBlob)
+        const formData = new FormData();
+        formData.append('video', current);
+        formData.append('poster', posterBlob, 'thumbnail.jpg');
+        formData.append("title", fileName ?? " ");
+        const res = await axios.post("/api/video", formData
+        )
+        return res.data
+      } catch (error) {
+        console.error('Error:', error);
+      }
+
+    }
+  })
   const handleUploadVideo = async () => {
-
-  const current = files[0]?.file;
-  if (!current) return;
-  if (!(current instanceof File)) {
-    throw new Error("Expected a File object");
-  }
-
-  try {
-    const posterBlob = await generateVideoThumbnail( current);
-    console.log(posterBlob)
-    const formData = new FormData();
-    formData.append('video',  current);
-    formData.append('poster', posterBlob, 'thumbnail.jpg');
-    formData.append("title", fileName ?? " ");
-    await axios.post("/api/video",formData
-      )
-
-  } catch (error) {
-    console.error('Error:', error);
-  }
-};
+     setDis(true)
+    const res = mutateAsync()
+    toast.promise(res, {
+      loading: "Uploading video...",
+      success: "Video uploaded successfully!",
+      error: "Something went wrong. Please try again.",
+    })
+    await res
+    setDis(false)
+    setOpen(!open)
+    handleRemoveFile()
+  };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={()=>setOpen(!open)}>
       <DialogTrigger asChild>
         <Button variant="outline">Upload Video</Button>
       </DialogTrigger>
@@ -71,7 +91,7 @@ export default function UploadVideoDialog() {
             We just need a few details to get you started.
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="flex flex-col gap-2">
           <div className="relative">
             {/* Drop area */}
@@ -88,7 +108,7 @@ export default function UploadVideoDialog() {
                 aria-label="Upload video file"
                 className="sr-only"
               />
-              
+
               {previewUrl ? (
                 <div className="absolute inset-0 flex items-center justify-center p-4">
                   <video
@@ -154,12 +174,13 @@ export default function UploadVideoDialog() {
               {fileName}
             </p>
           )}
-           {previewUrl && (
+          {previewUrl && (
             <Button
-            onClick={handleUploadVideo}
-             className='cursor-pointer'><UploadIcon/> Upload</Button>
-           )}
-        
+              onClick={handleUploadVideo}
+              disabled={dis}
+              className='cursor-pointer'><UploadIcon /> Upload</Button>
+          )}
+
         </div>
       </DialogContent>
     </Dialog>
