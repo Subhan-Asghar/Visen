@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { UploadIcon, XIcon, AlertCircleIcon, VideoIcon } from 'lucide-react'
 import { useFileUpload } from '@/hooks/use-file-upload'
 import { generateVideoThumbnail } from '@/lib/video-thumbnail'
-
+import axios from 'axios'
 export default function UploadVideoDialog() {
   const maxSizeMB = 100;
   const maxSize = maxSizeMB * 1024 * 1024;
@@ -48,11 +48,10 @@ export default function UploadVideoDialog() {
     const formData = new FormData();
     formData.append('video',  current);
     formData.append('poster', posterBlob, 'thumbnail.jpg');
+    formData.append("title", fileName ?? " ");
+    await axios.post("/api/video",formData
+      )
 
-    // await fetch('/api/upload-video', {
-    //   method: 'POST',
-    //   body: formData,
-    // });
   } catch (error) {
     console.error('Error:', error);
   }
