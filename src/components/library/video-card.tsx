@@ -6,7 +6,8 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { HeroVideoDialog } from "@/components/ui/hero-video-dialog"
-import { CirclePlay } from 'lucide-react';
+import { Play } from 'lucide-react';
+import { Button } from "../ui/button";
 
 type VideoProps = {
     title: string,
@@ -17,10 +18,26 @@ type VideoProps = {
 export function VideoCard({ title, poster, src }: VideoProps) {
     return (
         <>
-            <Card className="max-w-sm m-3 pb-1 ">
+            <Card className="max-w-sm m-3 pb-1">
                 <CardHeader>
                     <CardTitle>{title}</CardTitle>
-                    <CardAction className="cursor-pointer"><CirclePlay size={"25"} className="hover:text-primary" /></CardAction>
+                    <CardAction className="cursor-pointer">
+                        <button
+                            type="button"
+                            aria-label="Play video"
+                            className="group relative cursor-pointer border-0 bg-transparent p-0"
+
+                        >
+                            <div
+                                className="from-primary/30 to-primary relative flex size-10 scale-100 items-center justify-center rounded-full bg-gradient-to-b shadow-md transition-all duration-200 ease-out group-hover:scale-[1.1]"
+                            >
+                                <Play
+                                    className="size-5 scale-100 fill-white text-white transition-transform duration-200 ease-out group-hover:scale-110"
+                                />
+                            </div>
+                        </button>
+
+                    </CardAction>
                 </CardHeader>
                 <CardContent className="px-1 ">
                     <div className="relative ">
