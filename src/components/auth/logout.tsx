@@ -9,6 +9,7 @@ const Logout = () => {
         try{
             await axios.delete("/api/auth/login")
             router.push("/")
+            router.refresh();
         }
         catch{
             console.log("Something went wrong ")

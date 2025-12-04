@@ -63,7 +63,7 @@ export default function SignUp() {
             <DialogTrigger asChild>
                 <Button variant="outline">Sign up</Button>
             </DialogTrigger>
-            <DialogContent className="w-[425px]">
+            <DialogContent onInteractOutside={(e)=>{e.preventDefault()}} className="w-[425px]">
                 <div className="flex flex-col items-center gap-2">
                     <div
                         aria-hidden="true"
