@@ -10,7 +10,6 @@ export function proxy(req:NextRequest){
     }
 
     if (path ==="/" && token){
-      console.log("3 :)")
         return NextResponse.redirect(new URL("/library",req.url))
     }
   
